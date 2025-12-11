@@ -167,10 +167,6 @@ const TELEGRAM_CHAT_ID = 'твой_chat_id';
 **Ilyas Sadykov** - Backend/AI Engineer  
 Специализация: AI automation, Web3, Full-stack development
 
-- 🔗 [GitHub](https://github.com/yourusername)
-- 💼 [LinkedIn](https://linkedin.com/in/yourprofile)
-- 📧 bkmzc676@gmail.com
-
 ## 📄 Лицензия
 
 MIT License - используй как хочешь!
@@ -190,8 +186,4 @@ MIT License - используй как хочешь!
 ✅ Быстрая загрузка
 ✅ Профессиональная подача
 
-**Время разработки:** ~2 часа  
-**Строк кода:** ~350  
-**Dependencies:** 0 (чистый vanilla stack)
 
-Спасибо за проверку! 💕
