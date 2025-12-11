@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Крестики-нолики ✨</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f7 50%, #ffe8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.15);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #ff69b4;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: #ff8dc7;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 350px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #fff0f6 0%, #ffe8f0 100%);
+            border: 3px solid #ffb6d9;
+            border-radius: 20px;
+            font-size: 3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cell:hover:not(.taken) {
+            background: linear-gradient(135deg, #ffe8f0 0%, #ffd6e8 100%);
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
+        }
+
+        .cell.taken {
+            cursor: not-allowed;
+        }
+
+        .cell.x {
+            color: #ff69b4;
+            animation: popIn 0.3s ease;
+        }
+
+        .cell.o {
+            color: #ff8dc7;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .status {
+            font-size: 1.3em;
+            color: #ff69b4;
+            margin: 20px 0;
+            font-weight: 500;
+            min-height: 40px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 105, 180, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-content h2 {
+            color: #ff69b4;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .promo-code {
+            background: linear-gradient(135deg, #ff69b4, #ff8dc7);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 2em;
+            font-weight: bold;
+            margin: 20px 0;
+            letter-spacing: 3px;
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.4);
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff69b4, #ff8dc7);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.3);
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 105, 180, 0.4);
+        }
+
+        .reset-btn {
+            margin-top: 20px;
+        }
+
+        .sparkle {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .lose-message {
+            color: #ff8dc7;
+            font-size: 1.3em;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Крестики-нолики ✨</h1>
+        <p class="subtitle">Выиграй и получи промокод на скидку!</p>
+        
+        <div class="status" id="status">Твой ход! Ты играешь ❌</div>
+        
+        <div class="game-board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+
+        <button class="button reset-btn" onclick="resetGame()">Начать заново</button>
+    </div>
+
+    <!-- Win Modal -->
+    <div class="modal" id="winModal">
+        <div class="modal-content">
+            <div class="sparkle">🎉✨🎊</div>
+            <h2>Ты победила!</h2>
+            <p style="color: #ff8dc7; font-size: 1.2em; margin: 10px 0;">Вот твой промокод на скидку:</p>
+            <div class="promo-code" id="promoCode"></div>
+            <button class="button" onclick="closeModalAndReset()">Сыграть ещё раз</button>
+        </div>
+    </div>
+
+    <!-- Lose Modal -->
+    <div class="modal" id="loseModal">
+        <div class="modal-content">
+            <div class="sparkle">💫</div>
+            <h2>Почти получилось!</h2>
+            <p class="lose-message">Не расстраивайся! Попробуй ещё раз 💕</p>
+            <button class="button" onclick="closeModalAndReset()">Сыграть ещё раз</button>
+        </div>
+    </div>
+
+    <script>
+        // ВАЖНО: Замени этот URL на свой Telegram Bot API URL
+        const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN'; // Замени на токен твоего бота
+        const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID'; // Замени на свой chat ID
+        
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+            [0, 4, 8], [2, 4, 6] // diagonals
+        ];
+
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+
+        function handleCellClick(e) {
+            const clickedCell = e.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+            if (board[clickedCellIndex] !== '' || !gameActive || currentPlayer === 'O') {
+                return;
+            }
+
+            board[clickedCellIndex] = 'X';
+            clickedCell.textContent = '❌';
+            clickedCell.classList.add('taken', 'x');
+            
+            if (checkWin('X')) {
+                handlePlayerWin();
+                return;
+            }
+
+            if (checkDraw()) {
+                handleDraw();
+                return;
+            }
+
+            currentPlayer = 'O';
+            document.getElementById('status').textContent = 'Компьютер думает...';
+            
+            setTimeout(computerMove, 500);
+        }
+
+        function computerMove() {
+            if (!gameActive) return;
+
+            // Умный AI: сначала пытается выиграть, потом блокирует игрока
+            let move = findBestMove('O'); // Try to win
+            if (move === -1) move = findBestMove('X'); // Block player
+            if (move === -1) move = getRandomMove(); // Random move
+
+            board[move] = 'O';
+            const cell = cells[move];
+            cell.textContent = '⭕';
+            cell.classList.add('taken', 'o');
+
+            if (checkWin('O')) {
+                handleComputerWin();
+                return;
+            }
+
+            if (checkDraw()) {
+                handleDraw();
+                return;
+            }
+
+            currentPlayer = 'X';
+            document.getElementById('status').textContent = 'Твой ход!';
+        }
+
+        function findBestMove(player) {
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                const values = [board[a], board[b], board[c]];
+                
+                if (values.filter(v => v === player).length === 2 && values.includes('')) {
+                    return condition[values.indexOf('')];
+                }
+            }
+            return -1;
+        }
+
+        function getRandomMove() {
+            const availableMoves = board.map((val, idx) => val === '' ? idx : null).filter(val => val !== null);
+            return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+        }
+
+        function checkWin(player) {
+            return winningConditions.some(condition => {
+                return condition.every(index => board[index] === player);
+            });
+        }
+
+        function checkDraw() {
+            return board.every(cell => cell !== '');
+        }
+
+        function handlePlayerWin() {
+            gameActive = false;
+            const promoCode = generatePromoCode();
+            document.getElementById('promoCode').textContent = promoCode;
+            document.getElementById('winModal').style.display = 'flex';
+            sendTelegramMessage(`🎉 Победа! Промокод выдан: ${promoCode}`);
+        }
+
+        function handleComputerWin() {
+            gameActive = false;
+            document.getElementById('status').textContent = 'Компьютер выиграл 💕';
+            setTimeout(() => {
+                document.getElementById('loseModal').style.display = 'flex';
+                sendTelegramMessage('💫 Проигрыш');
+            }, 1000);
+        }
+
+        function handleDraw() {
+            gameActive = false;
+            document.getElementById('status').textContent = 'Ничья! Попробуй ещё раз 💕';
+            setTimeout(() => {
+                document.getElementById('loseModal').style.display = 'flex';
+                sendTelegramMessage('💫 Ничья');
+            }, 1000);
+        }
+
+        function generatePromoCode() {
+            return Math.floor(10000 + Math.random() * 90000).toString();
+        }
+
+        async function sendTelegramMessage(message) {
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message
+                    })
+                });
+            } catch (error) {
+                console.log('Telegram notification failed:', error);
+            }
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            document.getElementById('status').textContent = 'Твой ход! Ты играешь ❌';
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('taken', 'x', 'o');
+            });
+        }
+
+        function closeModalAndReset() {
+            document.getElementById('winModal').style.display = 'none';
+            document.getElementById('loseModal').style.display = 'none';
+            resetGame();
+        }
+    </script>
+</body>
+</html>
