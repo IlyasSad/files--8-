@@ -42,31 +42,8 @@ const TELEGRAM_BOT_TOKEN = '7890123456:AAHdqTcvbXYZ1234567890abcdefghijk';
 const TELEGRAM_CHAT_ID = '123456789';
 ```
 
-## Шаг 4: Развернуть игру
 
-### Вариант 1: GitHub Pages (бесплатно, просто)
-1. Создай репозиторий на GitHub
-2. Загрузи файл `tic-tac-toe-game.html` (переименуй в `index.html`)
-3. Зайди в Settings → Pages
-4. Выбери branch: main, folder: / (root)
-5. Сохрани - GitHub даст тебе ссылку типа: `https://username.github.io/repo-name/`
-
-### Вариант 2: Netlify (бесплатно, быстро)
-1. Зарегистрируйся на netlify.com
-2. Нажми "Add new site" → "Deploy manually"
-3. Перетащи файл `tic-tac-toe-game.html` (переименуй в `index.html`)
-4. Netlify даст ссылку типа: `https://random-name.netlify.app`
-
-### Вариант 3: Vercel (бесплатно, для продвинутых)
-1. Зарегистрируйся на vercel.com
-2. Импортируй репозиторий с GitHub или загрузи файл
-3. Vercel автоматически задеплоит
-
-### Вариант 4: Локальное тестирование
-Просто открой файл в браузере - игра будет работать!
-НО для Telegram уведомлений нужен HTTPS, поэтому используй один из вариантов выше.
-
-## Шаг 5: Протестировать
+## Шаг 4: Протестировать
 
 1. Открой ссылку на игру
 2. Сыграй партию
